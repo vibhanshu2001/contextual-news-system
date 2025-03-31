@@ -1,0 +1,51 @@
+{
+    "mappings": {
+        "properties": {
+            "category": {
+                "type": "keyword"
+            },
+            "description": {
+                "type": "text"
+            },
+            "latitude": {
+                "type": "float"
+            },
+            "longitude": {
+                "type": "float"
+            },
+            "location": {
+                "type": "geo_point"
+            },
+            "publication_date": {
+                "type": "date"
+            },
+            "relevance_score": {
+                "type": "float"
+            },
+            "source_name": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "summary": {
+                "type": "text"
+            },
+            "title": {
+                "type": "text"
+            },
+            "url": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            }
+        }
+    }
+}

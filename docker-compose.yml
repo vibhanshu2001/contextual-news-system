@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: news_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    container_name: elasticsearch_container
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./es_mappings/news_mapping.json:/usr/share/elasticsearch/config/news_mapping.json
+      - ./es_init.sh:/usr/share/elasticsearch/config/es_init.sh
+
+  app:
+    build: .
+    container_name: node_app
+    restart: always
+    depends_on:
+      - mysql
+      - elasticsearch
+    ports:
+      - "2056:2056"
+    environment:
+      - DATABASE_HOST=mysql
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=news_db
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+    volumes:
+      - .:/usr/src/app
+
+volumes:
+  mysql_data:
+  es_data:

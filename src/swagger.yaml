@@ -1,0 +1,164 @@
+openapi: 3.0.0
+info:
+  title: Contextual News Data Retrieval API
+  description: API for retrieving news articles based on search queries, categories, and relevance scores.
+  version: 1.0.0
+servers:
+  - url: http://localhost:2056/api/v1
+    description: Local development server
+
+paths:
+  /news/search:
+    get:
+      summary: Retrieve news articles based on search query and location
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of relevant news articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+  
+  /news/category:
+    get:
+      summary: Retrieve news articles based on category
+      parameters:
+        - name: category
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of news articles filtered by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+
+  /news/score:
+    get:
+      summary: Retrieve top news articles based on relevance score
+      responses:
+        "200":
+          description: A list of the most relevant news articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+
+  /news/nearby:
+    get:
+      summary: Retrieve news articles based on geographic location
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        "200":
+          description: A list of news articles relevant to the given location
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+
+  /news/source:
+    get:
+      summary: Retrieve news articles from a specific source
+      parameters:
+        - name: source
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of news articles from the specified source
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+
+components:
+  schemas:
+    Article:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+        publication_date:
+          type: string
+          format: date-time
+        source_name:
+          type: string
+        category:
+          type: array
+          items:
+            type: string
+        relevance_score:
+          type: number
+          format: float
+        location:
+          type: object
+          properties:
+            lat:
+              type: number
+              format: float
+            lon:
+              type: number
+              format: float
+        summary:
+          type: string
+        text_matching_score:
+          type: number
+          format: float
